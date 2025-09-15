@@ -3,6 +3,7 @@ package indi.mofan;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * -Xms20M -Xmx20M -Xmn10M -XX:+UseSerialGC -XX:+PrintGCDetails -verbose:gc
@@ -20,10 +21,27 @@ public class Demo_4 {
     private static final int _7M = 7 * 1024 * 1024;
     private static final int _8M = 8 * 1024 * 1024;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         List<byte[]> list = new ArrayList<>();
         list.add(new byte[_7M]);
         list.add(new byte[_512KB]);
         list.add(new byte[_512KB]);
+    }
+
+    private static void bigObject() {
+        List<byte[]> list = new ArrayList<>();
+        list.add(new byte[_8M]);
+        // list.add(new byte[_8M]);
+    }
+
+    private static void childThread() throws Exception {
+        new Thread(() -> {
+            List<byte[]> list = new ArrayList<>();
+            list.add(new byte[_8M]);
+            list.add(new byte[_8M]);
+        }).start();
+
+        System.out.println("sleep...");
+        System.in.read();
     }
 }
